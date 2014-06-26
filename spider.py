@@ -20,9 +20,9 @@ class AcmSpider:
 		self.root=parsed.scheme+"://"+parsed.hostname
 		self.problems=[]
 		self.name=name
+		self.pages=[]
 
 	def getPages(self):
-		self.pages=[]
 		pass
 
 	def parsePage(self):
@@ -39,7 +39,7 @@ class AcmSpider:
 			#print str(i)+'\t'+'\t'.join(self.problems[i].values())+'\n'
 			p=self.problems[i]
 			#print p['ojid'],p['title'],p['accepted'],p['submitted']
-			#print type(p['ojid']),type(p['title'])
+			#print type(p['ojid']),type(p['title']),type(p['accepted']),type(p['submitted'])
 			s+=str(i)+'\t'+p['ojid']+'\t'+p['title'].encode('utf8')+'\t'+p['accepted']+'\t'+p['submitted']+'\n'
 		f.write(str(s))
 		f.close()	
@@ -76,11 +76,35 @@ class Zoj(AcmSpider):
 
 			self.problems.append(problem)
 			
+class Poj(AcmSpider):
+	def getPages(self):
+		doc=pyq(self.url)
+		links=doc("font:contains('Volume')").parent().find('a')
+		self.pages=[self.root+'/'+pyq(l).attr('href') for l in links]
+
+	def parsePage(self,page):
+		doc=pyq(page)
+		trs=doc("form[action=searchproblem] + table tr[class!='in']")
+		for tr in trs:
+			problem={}
+			problem['ojid']=str(pyq(tr).find('td').eq(0).text())
+			print "id:",problem['ojid']
+			problem['title']=pyq(tr).find('td').eq(1).text()
+			if len(pyq(tr).find('td').eq(2).find('a'))==2:
+				problem['accepted']=str(pyq(tr).find('td').eq(2).find('a').eq(0).text())
+				problem['submitted']=str(pyq(tr).find('td').eq(2).find('a').eq(1).text())
+			else:
+				print "wtfffffffffffff!"
+			self.problems.append(problem)
+
 
 if __name__=='__main__':
-	zoj=Zoj("http://acm.zju.edu.cn/onlinejudge/showProblemsets.do",'ZOJ')
-	zoj.getPages()
-	zoj.genData()
+	#zoj=Zoj("http://acm.zju.edu.cn/onlinejudge/showProblemsets.do",'ZOJ.csv')
+	#zoj.getPages()
+	#zoj.genData()
+	poj=Poj("http://poj.org/problemlist","POJ.csv")
+	poj.getPages()
+	poj.genData()
 	
 
 
