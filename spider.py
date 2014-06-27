@@ -99,9 +99,9 @@ class Poj(AcmSpider):
 
 
 if __name__=='__main__':
-	#zoj=Zoj("http://acm.zju.edu.cn/onlinejudge/showProblemsets.do",'ZOJ.csv')
-	#zoj.getPages()
-	#zoj.genData()
+	zoj=Zoj("http://acm.zju.edu.cn/onlinejudge/showProblemsets.do",'ZOJ.csv')
+	zoj.getPages()
+	zoj.genData()
 	poj=Poj("http://poj.org/problemlist","POJ.csv")
 	poj.getPages()
 	poj.genData()

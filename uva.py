@@ -5,6 +5,10 @@ from spider import AcmSpider
 import httplib
 import urllib2
 class Uva(AcmSpider):
+	def __init__(self,url,name):
+		super(Uva,self).__init__(url,name)
+		self.ojids=[]
+
 	def getPages(self):
 		dirs=[]
 		#doc=pyq(self.url)
@@ -21,6 +25,8 @@ class Uva(AcmSpider):
 				httplib.HTTPConnection._http_vsn = 10
 				httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 				doc=pyq(curdir)
+				httplib.HTTPConnection._http_vsn = 11
+				httplib.HTTPConnection._http_vsn_str = 'HTTP/1.1'
 			if doc("div:contains('Browse Problems')+div+table img").attr('alt')=="FOLDER":
 				print "[folder]",curdir
 				links=doc("div:contains('Browse Problems')+div+table a")
@@ -39,6 +45,10 @@ class Uva(AcmSpider):
 		for tr in trs:
 			problem={}
 			problem['ojid']=pyq(tr).find('td').eq(1).text().split(u'\xa0')[0].encode('utf8')
+			if problem['ojid'] in self.ojids:
+				continue
+			else:
+				self.ojids.append(problem['ojid'])
 			print "id:",problem['ojid']
 			problem['title']=pyq(tr).find('td').eq(1).text().split(u'\xa0')[2]
 			#print problem['title'],type(problem['title'])
