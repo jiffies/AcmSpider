@@ -9,10 +9,10 @@ from pyquery import PyQuery as pyq
 class AcmSpider:
 	TARGET={
 			'id':'No',
-			'ojid':'题目编号',
-			'title':'题目标题',
-			'accepted':'做对次数',
-			'submitted':'提交次数'
+			'ojid':'OJ-id',
+			'title':'Title',
+			'accepted':'Accepted',
+			'submitted':'Submitted'
 			}
 	def __init__(self,url,name):
 		self.url=url
@@ -34,13 +34,13 @@ class AcmSpider:
 		self.problems.sort(lambda p1,p2:int(p1['ojid'])-int(p2['ojid']))
 		s = UserString.MutableString('')
 		f=file(self.name,'w')
-		s+=self.TARGET['id']+'\t'+self.TARGET['ojid']+'\t'+self.TARGET['title']+'\t'+self.TARGET['accepted']+'\t'+self.TARGET['submitted']+'\n'
+		s+=self.TARGET['id']+','+self.TARGET['ojid']+','+self.TARGET['title']+','+self.TARGET['accepted']+','+self.TARGET['submitted']+'\n'
 		for i in range(len(self.problems)):
 			#print str(i)+'\t'+'\t'.join(self.problems[i].values())+'\n'
 			p=self.problems[i]
 			#print p['ojid'],p['title'],p['accepted'],p['submitted']
 			#print type(p['ojid']),type(p['title']),type(p['accepted']),type(p['submitted'])
-			s+=str(i)+'\t'+p['ojid']+'\t'+p['title'].encode('utf8')+'\t'+p['accepted']+'\t'+p['submitted']+'\n'
+			s+=str(i+1)+','+p['ojid']+','+p['title'].encode('utf8')+','+p['accepted']+','+p['submitted']+'\n'
 		f.write(str(s))
 		f.close()	
 

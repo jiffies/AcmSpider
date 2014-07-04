@@ -25,8 +25,8 @@ class Uva(AcmSpider):
 				httplib.HTTPConnection._http_vsn = 10
 				httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 				doc=pyq(curdir)
-				httplib.HTTPConnection._http_vsn = 11
-				httplib.HTTPConnection._http_vsn_str = 'HTTP/1.1'
+				#httplib.HTTPConnection._http_vsn = 11
+				#httplib.HTTPConnection._http_vsn_str = 'HTTP/1.1'
 			if doc("div:contains('Browse Problems')+div+table img").attr('alt')=="FOLDER":
 				print "[folder]",curdir
 				links=doc("div:contains('Browse Problems')+div+table a")
