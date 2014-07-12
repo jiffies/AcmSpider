@@ -21,6 +21,7 @@ class AcmSpider:
 		self.problems=[]
 		self.name=name
 		self.pages=[]
+		self.cache={}
 
 	def getPages(self):
 		pass

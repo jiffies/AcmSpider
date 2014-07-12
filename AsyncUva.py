@@ -49,6 +49,7 @@ class AsyncUva(AcmSpider):
 				else:
 					print "[file]",curdir
 					self.pages.append(curdir)
+					self.cache[curdir]=doc
 				print "-",request_count
 			request_count-=1
 
@@ -65,19 +66,25 @@ class AsyncUva(AcmSpider):
 		io_loop.start()
 
 
-	def parsePage(self,io_loop,http_client,response):
+	def parsePage(self,io_loop,http_client,response,*args):
 		global count
 		if count>len(self.pages):
 			print "stop"
 			io_loop.stop()
 			return
-		if response.error:
-			print	"Error,try again",response.error
-			http_client.fetch(response.request,functools.partial(self.parsePage,io_loop,http_client))
-			return
+		try:
+			if response.error:
+				print	"Error,try again",response.error
+				http_client.fetch(response.request,functools.partial(self.parsePage,io_loop,http_client))
+				return
+		except:
+			pass
 		print count
 		count+=1
-		doc=pyq(response.body)
+		if args:
+			doc=args[0]
+		else:
+			doc=pyq(response.body)
 		trs= doc("div:contains('Browse Problems')+div+table tr[class!='sectiontableheader']")
 		for tr in trs:
 			problem={}
@@ -108,7 +115,12 @@ class AsyncUva(AcmSpider):
 		print "have %d pages" % len(self.pages)
 		io_loop=ioloop.IOLoop.instance()
 		for page in self.pages:
-			http_client.fetch(page,functools.partial(self.parsePage,io_loop,http_client))
+			if self.cache[page]:
+				print "cache",page
+				self.parsePage([],[],[],self.cache[page])
+			else:
+				print "fetch",page
+				http_client.fetch(page,functools.partial(self.parsePage,io_loop,http_client))
 		io_loop.add_callback(functools.partial(self.period,io_loop))
 		io_loop.start()
 
@@ -128,7 +140,7 @@ class AsyncUva(AcmSpider):
 
 
 if __name__=="__main__":
-	uva=AsyncUva("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8","test.csv")
+	uva=AsyncUva("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8","a.csv")
 	uva.getPages()
 	print uva.pages
 	#uva.pages.append("http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=5")
