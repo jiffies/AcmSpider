@@ -41,7 +41,7 @@ class AcmSpider:
 			p=self.problems[i]
 			#print p['ojid'],p['title'],p['accepted'],p['submitted']
 			#print type(p['ojid']),type(p['title']),type(p['accepted']),type(p['submitted'])
-			s+=str(i+1)+','+p['ojid']+','+"'"+p['title'].encode('gbk')+"'"+','+p['accepted']+','+p['submitted']+'\n'
+			s+=str(i+1)+','+p['ojid']+','+"'"+p['title'].encode('utf8')+"'"+','+p['accepted']+','+p['submitted']+'\n'
 		f.write(str(s))
 		f.close()	
 
